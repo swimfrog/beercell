@@ -1,0 +1,10 @@
+MIDlet-1: BeerCell,,com.swimfrog.games.beercell.BeerCell
+MIDlet-Description: (Free as in) BeerCell
+MIDlet-Icon: /clubs.png
+MIDlet-Jar-Size: 84985
+MIDlet-Jar-URL: BeerCell.jar
+MIDlet-Name: (Free as in) BeerCell
+MIDlet-Vendor: swimfrog
+MIDlet-Version: 1.0.16
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
