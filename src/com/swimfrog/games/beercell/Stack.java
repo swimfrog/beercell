@@ -10,29 +10,29 @@ public interface Stack {
 	Coordinate base = new Coordinate(0,0);
 	int width = 0;
 	
-	public void deal(Card card);
-	
-	void push(Card card) throws AgainstTheRulesException;
-	
-	Card pop() throws AgainstTheRulesException;
 	boolean canPop();
+	
 	boolean canPush(Card card);
 	
-	void paint(Graphics g);
+	Iterator createIterator();
+	public void deal(Card card);
+	Coordinate getBase();
+	
+	Card getCardAt(int location);
 	
 	int getHeight();
 	
-	Coordinate getBase();
+	int getSize();
 	
 	Card getTopCard();
-	Card getCardAt(int location);
-	int getSize();
 	boolean hasCards();
-	Iterator createIterator();
+	boolean isSelected();
+	void paint(Graphics g);
+	Card pop() throws AgainstTheRulesException;
+	
+	void push(Card card) throws AgainstTheRulesException;
 	
 	void select() throws AgainstTheRulesException;
 	
 	void unselect() throws AgainstTheRulesException;
-	
-	boolean isSelected();
 }

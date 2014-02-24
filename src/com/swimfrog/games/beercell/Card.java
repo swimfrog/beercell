@@ -1,6 +1,7 @@
 package com.swimfrog.games.beercell;
 
 import javax.microedition.lcdui.*;
+import com.swimfrog.games.beercell.exceptions.*;
 
 public class Card extends Canvas {
 	private final int rank;
@@ -13,68 +14,50 @@ public class Card extends Canvas {
 	private int width = 0;
 	private boolean selected = false;
 	
-	public void select() {
-		this.selected = true;
-	}
-	
-	public void unselect() {
-		this.selected = false;
-	}
-	
-	public boolean isSelected() {
-		return this.selected;
-	}
-	
-	Card (Deck deck, int rank, int suit) {
-		//TODO: Check to make sure rank is valid
+	Card (Deck deck, int rank, int suit) throws InvalidCardException {
+		if (! Rank.isValid(rank)) {
+			throw new InvalidCardException(rank+" is not a valid rank.");
+		}
 		this.rank = rank;
-		//TODO: Check to make sure suit is valid
+		if (! Suit.isValid(suit)) {
+			throw new InvalidCardException(suit+" is not a valid suit.");
+		}
 		this.suit = suit;
 		this.deck = deck;
 	}
 	
-	public Coordinate getBase() {
-		return this.base;
+	public Image getImage() {
+		//TODO: Make an option to get the imageInverted as well?
+		return imageNormal;
 	}
 	
-	public void setPosition(int x, int y) {
-		this.base.setX(x);
-		this.base.setY(y);
-	}
-	
-	public void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;
-		
-		buildImage();
-	}
-
 	private void buildImage() {
 		imageNormal = Image.createImage(width, height);
 		Graphics g = imageNormal.getGraphics();
-		
+	
+		//Draw the white part
 		g.setColor(0x00FFFFFF);
-		g.fillRoundRect(0, 0, imageNormal.getWidth()-1, imageNormal.getHeight()-1, 3, 3);
+		g.fillRoundRect(0, 0, width-1, height-1, 3, 3);
+		
+		//Draw the black outline
 		g.setColor(0x00000000);
-		//g.drawRoundRect(this.base.getX(), this.base.getY(), width, height, 3, 3);
-		g.drawRoundRect(0, 0, imageNormal.getWidth()-1, imageNormal.getHeight()-1, 3, 3);
+		g.drawRoundRect(0, 0, width-1, height-1, 3, 3);
+		
+		//Draw the numbers
 		g.setColor(Suit.getColor(suit));
 		Font font = Font.getFont(Font.FACE_MONOSPACE, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 		g.setFont(font);
 		g.drawString(getRank(), 2, 0, Graphics.LEFT | Graphics.TOP);
-		//g.drawString(getRank(), this.base.getX()+width, this.base.getY()+height-1, Graphics.RIGHT | Graphics.BASELINE);
 		
-		//Draw the icon
+		//Draw the icons
 		g.drawImage(deck.getSmallSuitImage(suit), width-2, 2, Graphics.TOP|Graphics.RIGHT);
 		g.drawImage(deck.getBigSuitImage(suit), width/2, (height/3)*2, Graphics.HCENTER|Graphics.VCENTER);
-		//g.drawImage(resizeImage(icon, icon.getWidth(), icon.getHeight()), 0, 0, Graphics.TOP|Graphics.RIGHT);
 		
-		//TODO getRGB() and invert the values to create imageInverted
 		imageInverted = deck.negateImage(imageNormal);
 	}
 	
-	public int getValue() {
-			return this.rank;
+	public Coordinate getBase() {
+		return this.base;
 	}
 	
 	public String getRank() {
@@ -100,8 +83,12 @@ public class Card extends Canvas {
 		return this.suit;
 	}
 	
-	public void print() {
-		System.out.println(getRank()+" of "+getSuit()+", Value: "+getValue());
+	public int getValue() {
+			return this.rank;
+	}
+	
+	public boolean isSelected() {
+		return this.selected;
 	}
 
 	protected void paint(Graphics g) {
@@ -111,6 +98,30 @@ public class Card extends Canvas {
 			g.drawImage(imageNormal, this.base.getX(), this.base.getY(), Graphics.TOP | Graphics.LEFT);
 		}
 		
+	}
+	
+	public void print() {
+		System.out.println(getRank()+" of "+getSuit()+", Value: "+getValue());
+	}
+	
+	public void select() {
+		this.selected = true;
+	}
+	
+	public void setPosition(int x, int y) {
+		this.base.setX(x);
+		this.base.setY(y);
+	}
+	
+	public void setSize(int width, int height) {
+		this.width = width;
+		this.height = height;
+		
+		buildImage();
+	}
+
+	public void unselect() {
+		this.selected = false;
 	}
 	
 }

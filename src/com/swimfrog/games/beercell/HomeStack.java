@@ -6,9 +6,14 @@ import javax.microedition.lcdui.*;
 import com.swimfrog.games.beercell.exceptions.AgainstTheRulesException;
 
 public class HomeStack extends Canvas implements Stack {
+	private static class PUSHPOPMODE {
+		static final boolean TEST = true;
+		static final boolean REAL = false;
+	}
 	Vector cards = new Vector();
 	Coordinate base = new Coordinate(0,0);
 	int width = 0;
+	
 	int height = 0;
 	
 	HomeStack(int baseX, int baseY, int width, int height) {
@@ -17,7 +22,7 @@ public class HomeStack extends Canvas implements Stack {
 		this.width = width;
 		this.height = height;
 	}
-	
+
 	public boolean canPop() {
 		try {
 			pop(PUSHPOPMODE.TEST);
@@ -27,10 +32,78 @@ public class HomeStack extends Canvas implements Stack {
 		return true;
 	}
 
+	public boolean canPush(Card card) {
+		try {
+			push(card, PUSHPOPMODE.TEST);
+		} catch (AgainstTheRulesException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public Iterator createIterator() {
+		return new StackIterator(this);
+	}
+	
+	public void deal(Card card) {
+		cards.addElement(card);
+	}
+	
+	public Coordinate getBase() {
+		return this.base;
+	}
+	
+	public Card getCardAt(int location) {
+		return (Card) cards.elementAt(location);
+	}
+
+	public int getHeight() {
+		return this.height;
+	}
+	
+	public int getSize() {
+		return cards.size();
+	}
+
+	public Card getTopCard() {
+		return (Card) cards.elementAt(cards.size()-1);
+	}
+	
+	public boolean hasCards() {
+		if (cards.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean isSelected() {
+		if (cards.size() > 0) {
+			return getTopCard().isSelected();
+		} else {
+			return false;
+		}
+	}
+	
+	public void paint(Graphics g) {
+		if (cards.size() == 0) {
+			g.setColor(0x0022BB22);
+			g.fillRect(base.getX(), base.getY(), width, height);
+			g.setColor(0x00000000);
+			g.drawRect(base.getX(), base.getY(), width, height);
+		} else {
+			for (int i=0; i < cards.size(); i++) {
+				Card theCard = (Card) cards.elementAt(i);
+				theCard.setPosition(base.getX(), base.getY());
+				theCard.paint(g);
+			}
+		}
+	}
+
 	public Card pop() throws AgainstTheRulesException {
 		return pop(PUSHPOPMODE.REAL);
 	}
-
+	
 	private Card pop(boolean testmode) throws AgainstTheRulesException {
 		if (cards.size() > 0) {
 			if (testmode == PUSHPOPMODE.REAL) {
@@ -45,28 +118,10 @@ public class HomeStack extends Canvas implements Stack {
 		}
 	}
 	
-	public void deal(Card card) { //TODO: Should probably be enforced by dealing cards at construction time.
-		cards.addElement(card);
-	}
-	
-	public boolean canPush(Card card) {
-		try {
-			push(card, PUSHPOPMODE.TEST);
-		} catch (AgainstTheRulesException e) {
-			return false;
-		}
-		return true;
-	}
-	
-	private static class PUSHPOPMODE {
-		static final boolean TEST = true;
-		static final boolean REAL = false;
-	}
-	
 	public void push(Card card) throws AgainstTheRulesException {
 		push(card, PUSHPOPMODE.REAL);
 	}
-
+	
 	public void push(Card card, boolean testmode) throws AgainstTheRulesException {
 		if (cards.size() > 0) {
 			if ((card.getSuit() == this.getTopCard().getSuit()) && (card.getValue() == this.getTopCard().getValue()+1)) {
@@ -87,53 +142,6 @@ public class HomeStack extends Canvas implements Stack {
 		}
 	}
 	
-	public int getHeight() {
-		return this.height;
-	}
-
-	public void paint(Graphics g) {
-		if (cards.size() == 0) {
-			g.setColor(0x0022BB22);
-			g.fillRect(base.getX(), base.getY(), width, height);
-			g.setColor(0x00000000);
-			g.drawRect(base.getX(), base.getY(), width, height);
-		} else {
-			for (int i=0; i < cards.size(); i++) {
-				Card theCard = (Card) cards.elementAt(i);
-				theCard.setPosition(base.getX(), base.getY());
-				theCard.paint(g);
-			}
-		}
-	}
-	
-	public Coordinate getBase() {
-		return this.base;
-	}
-	
-	public Card getTopCard() {
-		return (Card) cards.elementAt(cards.size()-1);
-	}
-	
-	public Card getCardAt(int location) {
-		return (Card) cards.elementAt(location);
-	}
-
-	public int getSize() {
-		return cards.size();
-	}
-	
-	public Iterator createIterator() {
-		return new StackIterator(this);
-	}
-	
-	public boolean hasCards() {
-		if (cards.size() > 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	public void select() throws AgainstTheRulesException {
 		if (cards.size() > 0) {
 			getTopCard().select();
@@ -147,14 +155,6 @@ public class HomeStack extends Canvas implements Stack {
 			getTopCard().unselect();
 		} else {
 			throw new AgainstTheRulesException("No card to unselect");
-		}
-	}
-	
-	public boolean isSelected() {
-		if (cards.size() > 0) {
-			return getTopCard().isSelected();
-		} else {
-			return false;
 		}
 	}
 

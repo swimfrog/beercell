@@ -8,6 +8,10 @@ public class MoveMacroIterator implements Iterator {
 		setMove(moveMacro);
 		currentLocation = moveMacro.getSize()-1;
 	}
+	
+	MoveMacro getMove() {
+		return move;
+	}
 
 	public boolean hasNext() {
 		if (currentLocation == move.getSize()-1) {
@@ -37,12 +41,12 @@ public class MoveMacroIterator implements Iterator {
 		return theMove;
 	}
 
-	void setMove(MoveMacro move) {
-		this.move = move;
+	public void reset() {
+		currentLocation = move.getSize()-1;
 	}
 
-	MoveMacro getMove() {
-		return move;
+	void setMove(MoveMacro move) {
+		this.move = move;
 	}
 
 }

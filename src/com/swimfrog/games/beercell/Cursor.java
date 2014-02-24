@@ -38,8 +38,26 @@ public class Cursor extends Canvas {
 		}
 	}
 	
-	public String toString() {
-		return "Offset:"+offset.toString()+" State:"+state+" Location:"+((Stack) stack).getTopCard().getBase();
+	protected void paint(Graphics g) {
+		//Draw the cursor over the currently-selected stack
+//		if ( selectedStack != null) {
+//			Coordinate selectedBase = selectedStack.getTopCard().getBase();
+//			g.drawImage(cursor, selectedBase.getX(), selectedBase.getY(), Graphics.BOTTOM|Graphics.HCENTER);
+//		}
+		if ( stack != null) {
+				Coordinate selectedBase = new Coordinate(0,0);
+			if (stack instanceof PlayStack) {
+				if (stack.hasCards()) {
+					selectedBase = (stack).getTopCard().getBase();
+				} else {
+					selectedBase = (stack).getBase();
+				}
+			} else if ((stack instanceof CellStack) || (stack instanceof HomeStack)) {
+				selectedBase = (stack).getBase();
+			}
+			g.drawImage(image[state], selectedBase.getX()+offset.getX(), selectedBase.getY()+offset.getY(), Graphics.HCENTER|Graphics.VCENTER);
+			
+		}
 	}
 	
 	public void setOffset(int x, int y) {
@@ -51,26 +69,8 @@ public class Cursor extends Canvas {
 		this.stack = stack;
 	}
 
-	protected void paint(Graphics g) {
-		//Draw the cursor over the currently-selected stack
-//		if ( selectedStack != null) {
-//			Coordinate selectedBase = selectedStack.getTopCard().getBase();
-//			g.drawImage(cursor, selectedBase.getX(), selectedBase.getY(), Graphics.BOTTOM|Graphics.HCENTER);
-//		}
-		if ( stack != null) {
-				Coordinate selectedBase = new Coordinate(0,0);
-			if (stack instanceof PlayStack) {
-				if (stack.hasCards()) {
-					selectedBase = (Coordinate) ((Stack) stack).getTopCard().getBase();
-				} else {
-					selectedBase = (Coordinate) ((Stack) stack).getBase();
-				}
-			} else if ((stack instanceof CellStack) || (stack instanceof HomeStack)) {
-				selectedBase = (Coordinate) ((Stack) stack).getBase();
-			}
-			g.drawImage(image[state], selectedBase.getX()+offset.getX(), selectedBase.getY()+offset.getY(), Graphics.HCENTER|Graphics.VCENTER);
-			
-		}
+	public String toString() {
+		return "Offset:"+offset.toString()+" State:"+state+" Location:"+(stack).getTopCard().getBase();
 	}
 	
 	//public Cursor (int offsetX, int offsetY) {

@@ -8,9 +8,13 @@ public class StackIterator implements Iterator {
 		setStack(stack);
 		currentLocation = stack.getSize()-1;
 	}
+	
+	Stack getStack() {
+		return stack;
+	}
 
 	public boolean hasNext() {
-		if (currentLocation == 0) {
+		if (currentLocation == -1) {
 			return false;
 		} else {
 			return true;
@@ -36,12 +40,12 @@ public class StackIterator implements Iterator {
 		return null;
 	}
 
-	void setStack(Stack stack) {
-		this.stack = stack;
+	public void reset() {
+		currentLocation = stack.getSize()-1;
 	}
 
-	Stack getStack() {
-		return stack;
+	void setStack(Stack stack) {
+		this.stack = stack;
 	}
 
 

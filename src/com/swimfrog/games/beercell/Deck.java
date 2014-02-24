@@ -2,11 +2,15 @@ package com.swimfrog.games.beercell;
 
 import java.io.IOException;
 import java.util.*;
-
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import com.swimfrog.games.beercell.exceptions.*;
 
 public class Deck {
+	private class BuildSuitImageMode {
+		final static int BIG = 0;
+		final static int SMALL = 1;
+	}
 	private Vector cards = new Vector();
 	private int cardWidth;
 	private int cardHeight;
@@ -24,8 +28,52 @@ public class Deck {
 		}
 	}
 	
+	public void addCard(Card card) {
+		//This is for testing
+		cards.addElement(card);
+	}
+	
+	private Image buildSuitImage(int suit, int mode) {
+		int divisor;
+		switch (mode) {
+			case BuildSuitImageMode.BIG: divisor = 2; break;
+			case BuildSuitImageMode.SMALL: divisor = 4; break;
+			default: divisor = 1;
+		}
+		
+		Image icon = null;
+		// Pull in graphics files and populate the icons
+		try {
+			switch (suit) {
+				case Suit.CLUBS: icon = Image.createImage("/clubs.png"); break;
+				case Suit.DIAMONDS: icon = Image.createImage("/diamonds.png"); break;
+				case Suit.HEARTS: icon = Image.createImage("/hearts.png"); break;
+				case Suit.SPADES: icon = Image.createImage("/spades.png"); break;
+			}
+		} catch (IOException e) {
+			icon = Image.createImage(this.cardWidth/divisor, this.cardHeight/divisor);
+			Graphics ig = icon.getGraphics();
+			ig.drawString("?", 0, 0, Graphics.TOP|Graphics.LEFT);
+		}
+		
+		if ((icon.getWidth() >= this.cardWidth/divisor) && (icon.getHeight() >= this.cardHeight/divisor)) {
+			icon = resizeImage(icon, cardWidth/divisor, cardWidth/divisor);
+		}
+		
+		return icon;
+	}
+	
+	public Image getBigSuitImage(int i) {
+		return this.bigSuits[i];
+	}
+	
+	public Image getSmallSuitImage(int i) {
+		return this.littleSuits[i];
+	}
+	
 	public void initialize() {
 		//Fill the deck with cards
+		try {
 		cards.addElement(new Card(this, Rank.ACE, Suit.DIAMONDS));
 		
 		cards.addElement(new Card(this, Rank.TWO, Suit.DIAMONDS));
@@ -82,6 +130,9 @@ public class Deck {
 		cards.addElement(new Card(this, Rank.JACK, Suit.CLUBS));
 		cards.addElement(new Card(this, Rank.QUEEN, Suit.CLUBS));
 		cards.addElement(new Card(this, Rank.KING, Suit.CLUBS));
+		} catch (InvalidCardException e) {
+			//TODO: Put something here...
+		}
 		
 		// Build the images for the suits, both big and small
 		for (int i=0; i < 4; i++) {
@@ -90,47 +141,34 @@ public class Deck {
 		}
 	}
 	
-	public Image getBigSuitImage(int i) {
-		return this.bigSuits[i];
+	public int length() {
+		return cards.size();
 	}
 	
-	public Image getSmallSuitImage(int i) {
-		return this.littleSuits[i];
+	public Image negateImage(Image image) {
+		int[] imageRGB = new int[image.getWidth() * image.getHeight()];
+		image.getRGB(imageRGB, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+		for (int i = 0; i < imageRGB.length; i++) {
+			imageRGB[i] = ~ imageRGB[i]; //NOT
+		}
+
+		return Image.createRGBImage(imageRGB, image.getWidth(), image.getHeight(), false);
 	}
 	
-	private class BuildSuitImageMode {
-		final static int BIG = 0;
-		final static int SMALL = 1;
+	public Card popRandom() {
+		Random generator = new Random();
+		int r = generator.nextInt(cards.size());
+		Card theCard = (Card) cards.elementAt(r);
+		cards.removeElementAt(r);
+		//cards.remove(theCard);
+		return theCard;
 	}
 	
-	private Image buildSuitImage(int suit, int mode) {
-		int divisor;
-		switch (mode) {
-			case BuildSuitImageMode.BIG: divisor = 2; break;
-			case BuildSuitImageMode.SMALL: divisor = 4; break;
-			default: divisor = 1;
+	void print() {
+		for (int i=0; i < cards.size(); i++) {
+			Card thisCard = (Card) cards.elementAt(i);
+			thisCard.print();
 		}
-		
-		Image icon = null;
-		// Pull in graphics files and populate the icons
-		try {
-			switch (suit) {
-				case Suit.CLUBS: icon = Image.createImage("/clubs.png"); break;
-				case Suit.DIAMONDS: icon = Image.createImage("/diamonds.png"); break;
-				case Suit.HEARTS: icon = Image.createImage("/hearts.png"); break;
-				case Suit.SPADES: icon = Image.createImage("/spades.png"); break;
-			}
-		} catch (IOException e) {
-			icon = Image.createImage(this.cardWidth/divisor, this.cardHeight/divisor);
-			Graphics ig = icon.getGraphics();
-			ig.drawString("?", 0, 0, Graphics.TOP|Graphics.LEFT);
-		}
-		
-		if ((icon.getWidth() >= this.cardWidth/divisor) && (icon.getHeight() >= this.cardHeight/divisor)) {
-			icon = resizeImage(icon, cardWidth/divisor, cardWidth/divisor);
-		}
-		
-		return icon;
 	}
 	
 	private Image resizeImage(Image image, int newWidth, int newHeight) {
@@ -153,35 +191,5 @@ public class Deck {
 		Image immutableImage = Image.createImage(newImage);
 
 		return immutableImage;
-	}
-	
-	public Image negateImage(Image image) {
-		int[] imageRGB = new int[image.getWidth() * image.getHeight()];
-		image.getRGB(imageRGB, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-		for (int i = 0; i < imageRGB.length; i++) {
-			imageRGB[i] = ~ imageRGB[i]; //NOT
-		}
-
-		return Image.createRGBImage(imageRGB, image.getWidth(), image.getHeight(), false);
-	}
-	
-	void print() {
-		for (int i=0; i < cards.size(); i++) {
-			Card thisCard = (Card) cards.elementAt(i);
-			thisCard.print();
-		}
-	}
-	
-	public int length() {
-		return cards.size();
-	}
-	
-	public Card popRandom() {
-		Random generator = new Random();
-		int r = generator.nextInt(cards.size());
-		Card theCard = (Card) cards.elementAt(r);
-		cards.removeElementAt(r);
-		//cards.remove(theCard);
-		return theCard;
 	}
 }

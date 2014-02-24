@@ -1,3 +1,7 @@
 .mtj.tmp
 .DS_Store
 ._.*
+bin
+deployed
+.class
+.jad

@@ -3,7 +3,7 @@ package com.swimfrog.games.beercell.exceptions;
 
 public class NoFreeCellException extends Exception {
 
-//	NoFreeCellException(String string) {
-//		super(string);
-//	}
+	public NoFreeCellException() {
+		super("There are not enough free cells available to complete this move.");
+	}
 }

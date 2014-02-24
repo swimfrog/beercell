@@ -17,4 +17,12 @@ public class Suit {
 			default: return BLACK;
 		}
 	}
+	
+	public static boolean isValid(int suit) {
+		if ((suit >= Suit.CLUBS) && (suit <= Suit.SPADES)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

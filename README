@@ -1,0 +1,5 @@
+BeerCell - a J2ME implementation of FreeCell (Free as in Beer)
+
+This was just intended to be a simple FreeCell game so that I could play FreeCell on the bus on my BlackBerry. At the time, no "free" FreeCell games existed, so I made one.
+
+The controls aren't particularly intuitive; they're designed with BlackBerry's thumbwheel in mind, but it's fairly efficient to move around once you get used to it. It would take some doing to make it work with touch devices.

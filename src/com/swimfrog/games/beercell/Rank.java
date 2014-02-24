@@ -14,4 +14,12 @@ public class Rank {
 	static final int JACK = 11;
 	static final int QUEEN = 12;
 	static final int KING = 13;
+	
+	public static boolean isValid(int rank) {
+		if ((rank >= Rank.ACE) && (rank <= Rank.KING)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
