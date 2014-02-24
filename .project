@@ -15,14 +15,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-<<<<<<< HEAD
-=======
 		<buildCommand>
 			<name>org.eclipse.mtj.core.packageBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
->>>>>>> d6d1fd6bcb6281414fcaa63d1eb39c364cd20fe6
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
